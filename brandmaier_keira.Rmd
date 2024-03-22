@@ -46,14 +46,14 @@ abstract: |
   
   <!-- https://tinyurl.com/ybremelq -->
   
-keywords          : "keywords"
+keywords          : "exams, generator, ocr"
 wordcount         : "X"
 
 bibliography      : "r-references.bib"
 
-floatsintext      : no
-linenumbers       : yes
-draft             : no
+floatsintext      : yes
+linenumbers       : no
+draft             : yes
 mask              : no
 
 figurelist        : no
@@ -72,7 +72,7 @@ r_refs("r-references.bib")
 ```{r analysis-preferences}
 # Seed for random number generation
 set.seed(42)
-knitr::opts_chunk$set(cache.extra = knitr::rand_seed)
+knitr::opts_chunk$set(cache.extra = knitr::rand_seed, eval = FALSE)
 ```
 
 ## Creating exams from a Word template
@@ -83,7 +83,7 @@ The `exams` package generates exams from a set of items that are specified with 
 
 ## Generating reports
 
-```{r echo=FALSE}
+```{r echo=FALSE, eval=FALSE}
 keira::grade_report(nops_eval_file = "nops_eval.csv",
                     path_to_scans = "png/",
                     outfolder = "reports/")
@@ -112,6 +112,19 @@ A major advantage of machine-readable exams is the opportunity for a quantitativ
 
 ```{r echo=FALSE}
 keira::plot_item_difficulty()
+```
+
+To inspect the distribution of points over all students, use the following command:
+
+```{r}
+keira::plot_points_distribution()
+```
+
+This command returns a ggplot object, which can be further modified. For example, to add a vertical line that divides the points into passes and fails (assuming that the division is at `totalpoints/2`, use the following code:
+
+```{r}
+keira::plot_points_distribution()+
+  ggplot2::geom_vline(xintercept = totalpoints/2, lty=2)
 ```
 
 ## Styling reports
