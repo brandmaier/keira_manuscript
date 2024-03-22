@@ -102,6 +102,27 @@ keira::registration_repair_tool()
 
 The output of this function is a new zip file including all scanned images and the fixed meta information, which can then be used for automated grading and report generation.
 
+## Creating exam
+
+Exam generation is entirely handled by the original function provided by the `exam` package. However, `keira` provides a wrapper function:
+
+```{r}
+set.seed(42)
+keira::generate(files=list.files("items", full.names=TRUE),
+                n=2,
+                title="M99 Alpine Therapy Approaches",
+                course = "M99",
+                showpoints = TRUE,
+                intro = intro,
+                points = points,
+                date="2023-02-15",
+                logo = "./logo.png",
+                output_dir = "exam"
+                )
+```
+
+For reproducibility of exams, it seems wise to set a seed for then random number generator (but note potential problems with this approach when upgrading R versions in between (Peikert et al.).
+
 ## Generating reports
 
 A major feature of `keira` is the generation of graded report sheets that overlay a layer of correction notes on top of the original exams. This includes information about how many points were achieved in each item, information about which answers were correctly and incorrectly selected, and how many points were achieved in total and what grade was achieved. In part, these pieces of information are also provided natively by the `exams` package, however there is no way to provide reports superimposed on the original exam scans. Figure X shows an exemplary result of the reporting function in `keira`.
