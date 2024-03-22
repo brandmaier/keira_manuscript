@@ -77,7 +77,9 @@ knitr::opts_chunk$set(cache.extra = knitr::rand_seed)
 
 ## Creating exams from a Word template
 
-...
+The `exams` package generates exams from a set of items that are specified with one file per item either as Markdown or as LaTeX. For users unfamiliar with either format, `keira` offers a specification of exams as a Microsoft Word file.
+
+![](img/word_screenshot.png)
 
 ## Generating reports
 
@@ -103,6 +105,14 @@ The `grade_report` function has various parameters to adapt the style of the gra
 |                   |      |             |
 
 : B = Boolean, I = Integer, N = Numeric
+
+Item Difficulty
+
+A major advantage of machine-readable exams is the opportunity for a quantitative analysis of the exams. For example, it seems good practice to compute item difficulty both for informing future item selection as well as potentially identifying coding errors or other problems with individual items. To generate an item difficulty plot, use the following command:
+
+```{r echo=FALSE}
+keira::plot_item_difficulty()
+```
 
 ## Styling reports
 
