@@ -4,7 +4,7 @@ shorttitle        : "keira exams"
 
 author: 
   - name          : "Andreas M. Brandmaier"
-    affiliation   : "1"
+    affiliation   : "1,2"
     corresponding : yes    # Define only one corresponding author
     address       : "Postal address"
     email         : "my@email.com"
@@ -12,22 +12,15 @@ author:
       - "Conceptualization"
       - "Writing - Original Draft Preparation"
       - "Writing - Review & Editing"
-  - name          : "Ernst-August Doelle"
-    affiliation   : "1,2"
-    role:
-      - "Writing - Review & Editing"
-      - "Supervision"
 
 affiliation:
   - id            : "1"
-    institution   : "Wilhelm-Wundt-University"
+    institution   : "Department of Psychology, MSB Medical School Berlin, Berlin, Germany"
   - id            : "2"
-    institution   : "Konstanz Business School"
+    institution   : "Max Planck Institute for Human Development, Berlin, Germany"
 
 authornote: |
-  Add complete departmental affiliations for each author here. Each new line herein must be indented, like this line.
-
-  Enter author note here.
+  I would like to thank my colleagues (in alphabetical order) Uwe Altmann, Miriam Gade,  Lars Michael, and Moritz Petzold for feedback on the package.
 
 abstract: |
   One or two sentences providing a **basic introduction** to the field,  comprehensible to a scientist in any discipline.
@@ -61,6 +54,7 @@ tablelist         : no
 footnotelist      : no
 
 classoption       : "man"
+#classoption       : "jou"
 output            : papaja::apa6_pdf
 ---
 
@@ -79,9 +73,38 @@ knitr::opts_chunk$set(cache.extra = knitr::rand_seed, eval = FALSE)
 
 The `exams` package generates exams from a set of items that are specified with one file per item either as Markdown or as LaTeX. For users unfamiliar with either format, `keira` offers a specification of exams as a Microsoft Word file.
 
+To convert a Word exam to individual item files in LaTeX, use the following function:
+
+```{r}
+converter(input_file = "exam.docx", 
+          output_directory = "items/")
+```
+
 ![](img/word_screenshot.png)
 
+By default, the function converts every item in the Word file to a separate file in the specified output folder (here: "items/"). If there is only a single correct response specified, the item is coded as single response item, otherwise it is coded as multiple response item. This distinction is relevant if partial scoring is used for deriving the points achieved in the item. To override this default behavior, the item body must contain a tag, which can either be "#schoice" to force a single response item or "#mchoice" to force a multiple response item. By default, different responses within an item are randomly shuffled; if multiple variants of the exam are generated, each variant has its own random shuffling of responses. If responses should appear in the exact order as they were given in the original Word file, set the argument `shuffle_items = FALSE`.
+
+```{r}
+converter(input_file = "exam.docx", 
+          output_directory = "items/",
+          shuffle_items = FALSE)
+```
+
+## Inspecting exams
+
+## Repair
+
+Typically, a few students in every exam miss to fill out the coding matrix for their registration id. If these errors are not caught during the exam, they can be fixed at this stage. Even though the exams package provides a similar functionality already, `keira` has a more comprehensive approach here that also checks for duplicate registration ids (which occasionally occur due to coding errors by the students).
+
+```{r}
+keira::registration_repair_tool()
+```
+
+The output of this function is a new zip file including all scanned images and the fixed meta information, which can then be used for automated grading and report generation.
+
 ## Generating reports
+
+A major feature of `keira` is the generation of graded report sheets that overlay a layer of correction notes on top of the original exams. This includes information about how many points were achieved in each item, information about which answers were correctly and incorrectly selected, and how many points were achieved in total and what grade was achieved. In part, these pieces of information are also provided natively by the `exams` package, however there is no way to provide reports superimposed on the original exam scans. Figure X shows an exemplary result of the reporting function in `keira`.
 
 ```{r echo=FALSE, eval=FALSE}
 keira::grade_report(nops_eval_file = "nops_eval.csv",
@@ -91,18 +114,18 @@ keira::grade_report(nops_eval_file = "nops_eval.csv",
 
 The `grade_report` function has various parameters to adapt the style of the graded report sheet. Table X provides an overview of all parameters.
 
-| Parameter         | Type | Description |
-|-------------------|------|-------------|
-| show_points       | B    | xx          |
-| show_total_points | B    | xx          |
-|                   |      |             |
-|                   |      |             |
-|                   |      |             |
-|                   |      |             |
-|                   |      |             |
-|                   |      |             |
-|                   |      |             |
-|                   |      |             |
+| Parameter         | Type | Description                                                                                                                 |
+|-----------------|-----------|--------------------------------------------|
+| show_points       | B    | xx                                                                                                                          |
+| show_total_points | B    | xx                                                                                                                          |
+|                   |      |                                                                                                                             |
+|                   |      |                                                                                                                             |
+|                   |      |                                                                                                                             |
+|                   |      |                                                                                                                             |
+|                   |      |                                                                                                                             |
+|                   |      |                                                                                                                             |
+|                   |      |                                                                                                                             |
+| rotate            | B    | Rotate the exam, such that the marks align with the original sheet. Should always be TRUE but is currently not well tested. |
 
 : B = Boolean, I = Integer, N = Numeric
 
@@ -125,6 +148,12 @@ This command returns a ggplot object, which can be further modified. For example
 ```{r}
 keira::plot_points_distribution()+
   ggplot2::geom_vline(xintercept = totalpoints/2, lty=2)
+```
+
+To get a summary table with item information (including item difficulty and item discrimination), use the following command:
+
+```{r eval=FALSE}
+item_summary()
 ```
 
 ## Styling reports
