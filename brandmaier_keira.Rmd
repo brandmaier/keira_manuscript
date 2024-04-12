@@ -82,7 +82,9 @@ converter(input_file = "exam.docx",
 
 ![](img/word_screenshot.png)
 
-By default, the function converts every item in the Word file to a separate file in the specified output folder (here: "items/"). If there is only a single correct response specified, the item is coded as single response item, otherwise it is coded as multiple response item. This distinction is relevant if partial scoring is used for deriving the points achieved in the item. To override this default behavior, the item body must contain a tag, which can either be "#schoice" to force a single response item or "#mchoice" to force a multiple response item. By default, different responses within an item are randomly shuffled; if multiple variants of the exam are generated, each variant has its own random shuffling of responses. If responses should appear in the exact order as they were given in the original Word file, set the argument `shuffle_items = FALSE`.
+By default, the function converts every item in the Word file to a separate file in the specified output folder (here: "items/"). If there is only a single correct response specified, the item is coded as single response item, otherwise it is coded as multiple response item. This distinction is relevant if partial scoring is used for deriving the points achieved in the item. To override this default behavior, the item body must contain a tag, which can either be "#schoice" to force a single response item or "#mchoice" to force a multiple response item. By default, different responses within an item are randomly shuffled; if multiple variants of the exam are generated, each variant has its own random shuffling of responses. If responses should appear in the exact order as they were given in the original Word file, set the argument `shuffle_items = FALSE`. Furthermore, tags can be used to encode how many points worth each exam is. This is particularly useful if items differ in their point values -- otherwise, fixed number of points per items can be given later when the exam file is generated.
+
+Last, `keira` supports the integration of images. Image files, preferably in the portable network graphics format (PNG) can be integrated by adding the keyword img followed by a colon and the image filename all enclosed in square brackets, e.g. [img:flowers.png].
 
 ```{r}
 converter(input_file = "exam.docx", 
@@ -136,7 +138,7 @@ keira::grade_report(nops_eval_file = "nops_eval.csv",
 The `grade_report` function has various parameters to adapt the style of the graded report sheet. Table X provides an overview of all parameters.
 
 | Parameter         | Type | Description                                                                                                                 |
-|-----------------|-----------|--------------------------------------------|
+|-----------------|-----------------|--------------------------------------|
 | show_points       | B    | xx                                                                                                                          |
 | show_total_points | B    | xx                                                                                                                          |
 |                   |      |                                                                                                                             |
@@ -179,7 +181,25 @@ item_summary()
 
 ## Styling reports
 
-The report style in `keira` is customizable. The parameter `style` is a list of functions that draw marks for hits, misses, false alarms and correct rejections. By default, a hit is drawn with green rectangle, a miss with a red cross, a false alaram with a red box and correct rejections are not marked at all.
+The report style in `keira` is customizable. The parameter `style` is a list of functions that draw marks for hits, misses, false alarms and correct rejections. By default, a hit is drawn with green rectangle, a miss with a red cross, a false alarms with a red box and correct rejections are not marked at all. This default style is called `style_semitransparent`. To create colorblind-friendly report sheets, try the alternative stlye `style_cbfriendly.` Figure show how the report cards look like with each of the two styles.
+
+Helper functions
+
+`keira` provides further helper functions for processing and preparing files in R. The function `pdf2png()` convertes PDF files to PNG files. This function is often useful because scanners may output PDF files whereas the exams package requires PNG files as input. When exam sheets are pinned to the Zeileis (XXX) recommends
+
+## Graphical User Interface
+
+`keira` offers a graphical user-interface for users unfamiliar with R. This interface gives access to basic functionality of the exam generation and evaluation pipelines without the need for programming a single line of code. The interface is realized via the `shiny` package for R. The interface can be run from within R by issuing:
+
+```         
+run()
+```
+
+The interface is shown in Figure XXX. At the top, there are three tab panels for the different phases of exam creation. The first tab called XXX offers the functionality to generate an exam from a Word file.
+
+## Trouble shooting
+
+-   Problem: Stains or misprints lead to false positives or false negatives. Solution: The exams package provides the optical recognition algorithm, which can be fine-tuned by parameters.
 
 ## Data analysis
 
